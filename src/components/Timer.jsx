@@ -6,10 +6,10 @@ import PlayButton from "./Button/PlayButton";
 import SettingsButton from "./Button/SettingsButton";
 import SettingsContext from "./SettingsContext";
 
-function Timer(props) {
+function Timer() {
   const settingsInfo = useContext(SettingsContext);
 
-  const [isPaused, setIsPaused] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
   const [mode, setMode] = useState("work"); //work,break, null or pause
   const [secondsLeft, setSecondsLeft] = useState(0);
 
@@ -21,67 +21,92 @@ function Timer(props) {
     setSecondsLeft(settingsInfo.workMinutes * 60);
   }
 
-  function switchMode() {
-    const nextMode = modeRef.current === "work" ? "break" : "work";
-    const nextSeconds =
-      nextMode === "work"
-        ? settingsInfo.workMinutes * 60
-        : settingsInfo.breakMinutes * 60;
-
-    setMode(nextMode);
-    modeRef.current = nextMode;
-
-    setSecondsLeft(nextSeconds);
-    secondsLeftRef.current = nextSeconds;
-  }
-
   function tick() {
     secondsLeftRef.current--;
     setSecondsLeft(secondsLeftRef.current);
   }
 
   useEffect(() => {
-    initiateTimer();
+    function switchMode() {
+      const nextMode = modeRef.current === "work" ? "break" : "work";
+      setMode(nextMode);
+      modeRef.current = nextMode;
+
+      const nextSeconds =
+        nextMode === "work"
+          ? settingsInfo.workMinutes * 60
+          : settingsInfo.breakMinutes * 60;
+
+      initiateTimer(nextSeconds);
+    }
+
+    function initiateTimer(seconds) {
+      setSecondsLeft(seconds);
+      secondsLeftRef.current = seconds;
+    }
+
+    initiateTimer(settingsInfo.workMinutes * 60);
 
     const interval = setInterval(() => {
       if (isPausedRef.current) {
         return;
-      } 
+      }
       if (secondsLeftRef.current === 0) {
         return switchMode();
       }
 
       tick();
-    }, 1000);
-    
-    return clearInterval(interval)
+    }, 1);
+
+    return () => clearInterval(interval);
     // eslint-disable-next-line
   }, [settingsInfo]);
 
-  const handlePause = () => setIsPaused((prevState) => !prevState);
+  const totalSeconds =
+    mode === "work"
+      ? settingsInfo.workMinutes * 60
+      : settingsInfo.breakMinutes * 60;
 
+  const percentage = Math.round((secondsLeft / totalSeconds) * 100);
+
+  const minutes = Math.floor(secondsLeft / 60);
+  let seconds = secondsLeft % 60;
+
+  if (seconds < 10) seconds = "0" + seconds;
+
+  console.log(mode);
   return (
     <>
       <div>
         <CircularProgressbar
-          value={secondsLeft}
-          text={secondsLeft}
+          value={percentage}
+          text={`${minutes}:${seconds} `}
           styles={buildStyles({
             textColor: "#fff",
-            pathColor: "#f54e4e",
+            pathColor: mode === 'work' ? "#f54e4e" : "#4aec8c",
             tailColor: "rgba(255,255,255,.2)",
           })}
         />
       </div>
       <div className="buttons-container">
         {isPaused ? (
-          <PlayButton onClick={handlePause} />
+          <PlayButton
+            onClick={() => {
+              setIsPaused(false);
+              isPausedRef.current = false;
+            }}
+          />
         ) : (
-          <PauseButton onClick={handlePause} />
+          <PauseButton
+            onClick={() => {
+              setIsPaused(true);
+              isPausedRef.current = true;
+            }}
+          />
         )}
       </div>
       <div className="settings-button-container">
-        <SettingsButton onClick={props.handleClick} />
+        <SettingsButton onClick={() => settingsInfo.setShowSettings(true)} />
       </div>
     </>
   );
