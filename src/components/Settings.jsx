@@ -4,16 +4,16 @@ import BackButton from "./Button/BackButton";
 import SettingsContext from "./SettingsContext";
 
 function Settings({ handleClick }) {
-    const settingsInfo = useContext(SettingsContext)
+  const settingsInfo = useContext(SettingsContext);
   return (
     <div className="settings-container">
-      <label>work:  {settingsInfo.workMinutes}:00 minutes </label>
+      <label>work: {settingsInfo.workMinutes}:00 minutes </label>
       <ReactSlider
         className="slider"
         thumbActiveClassName="thumb"
         trackClassName="track"
         value={settingsInfo.workMinutes}
-        onChange={newValue => settingsInfo.setWorkMinutes(newValue)}
+        onChange={(newValue) => settingsInfo.setWorkMinutes(newValue)}
         min={1}
         max={120}
       />
@@ -23,14 +23,13 @@ function Settings({ handleClick }) {
         thumbActiveClassName="thumb"
         trackClassName="track"
         value={settingsInfo.breakMinutes}
-        onChange={newValue => settingsInfo.setBreakMinutes(newValue)}
+        onChange={(newValue) => settingsInfo.setBreakMinutes(newValue)}
         min={1}
         max={120}
       />
       <div className="back-button-container">
-      <BackButton onClick={handleClick}/> 
+        <BackButton onClick={handleClick} />
       </div>
-      
     </div>
   );
 }
