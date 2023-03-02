@@ -1,24 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import React , { useState } from "react";
+import Settings from "./components/Settings";
+import Timer from "./components/Timer";
 
 function App() {
+
+  const [showSettings, setShowSettings] = useState(false);
+  console.log(showSettings)
+  const settingsToggle = () => {
+    setShowSettings(prevState => !prevState )
+   
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    <main>
+      {showSettings ? <Settings handleClick={settingsToggle} /> : <Timer handleClick={settingsToggle}/>}
+    </main>
+    </>
   );
 }
 
