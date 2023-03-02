@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import ReactSlider from "react-slider";
+import BackButton from "./Button/BackButton";
 import SettingsContext from "./SettingsContext";
 
 function Settings({ handleClick }) {
@@ -26,6 +27,10 @@ function Settings({ handleClick }) {
         min={1}
         max={120}
       />
+      <div className="back-button-container">
+      <BackButton onClick={handleClick}/> 
+      </div>
+      
     </div>
   );
 }

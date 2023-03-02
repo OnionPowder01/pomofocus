@@ -24,7 +24,7 @@ function App() {
          setWorkMinutes,
          setBreakMinutes,
       }}> 
-      {showSettings ? <Settings  /> : <Timer handleClick={settingsToggle}/>}
+      {showSettings ? <Settings handleClick={settingsToggle} /> : <Timer handleClick={settingsToggle}/>}
       </SettingsContext.Provider> 
     </main>
     </>

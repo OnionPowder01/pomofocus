@@ -19,6 +19,13 @@ main {
   text-align: center;
 }
 
+
+.settings-container {
+  text-align: left;
+}
+
+/* Buttons */
+
 button {
   background-color: transparent;
   color: rgb(255, 255, 255, 0.8);
@@ -33,24 +40,28 @@ button {
   margin-top: 20px;
 }
 
-button.settings {
+button.with-text {
   width: auto;
   background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  border-radius: 14px;
   padding: 10px 20px;
   font-size: 1.4rem;
   line-height: 36px;
 }
 
-button.settings svg {
+button.with-text svg {
   width: 36px;
   float: left;
   margin-right: 5px;
 }
 
-.settings-container {
-  text-align: left;
+.back-button-container {
+  text-align: center;
+  margin-top: 20px;
 }
+
+
+/* Slider */
 
 label {
   display: block;
@@ -58,8 +69,6 @@ label {
   margin-top: 20px;
   text-transform: capitalize ;
 }
-
-/* Slider */
 
 .slider {
   height: 40px;
