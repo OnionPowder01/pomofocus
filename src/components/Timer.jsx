@@ -6,7 +6,7 @@ import PlayButton from "./PlayButton";
 import SettingsButton from "./SettingsButton";
 
 const red = "#f54e4e";
-const green = "4aec8c";
+const green = "#4aec8c";
 
 function Timer(props) {
   return (
@@ -19,7 +19,8 @@ function Timer(props) {
             textColor: "#fff",
             pathColor: red,
             tailColor: "rgba(255,255,255,.2)",
-          })}
+          })} 
+
         />
       </div>
       <div className="buttons-container">

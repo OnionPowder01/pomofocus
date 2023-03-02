@@ -1,20 +1,31 @@
 import React , { useState } from "react";
 import Settings from "./components/Settings";
+import SettingsContext from "./components/SettingsContext";
 import Timer from "./components/Timer";
 
 function App() {
 
   const [showSettings, setShowSettings] = useState(false);
-  console.log(showSettings)
+  const [workMinutes, setWorkMinutes] = useState(25);
+  const [breakMinutes, setBreakMinutes] = useState(5)
+
   const settingsToggle = () => {
     setShowSettings(prevState => !prevState )
-   
+  
   }
+
 
   return (
     <>
     <main>
-      {showSettings ? <Settings handleClick={settingsToggle} /> : <Timer handleClick={settingsToggle}/>}
+      <SettingsContext.Provider value={{
+         workMinutes,
+         breakMinutes,
+         setWorkMinutes,
+         setBreakMinutes,
+      }}> 
+      {showSettings ? <Settings  /> : <Timer handleClick={settingsToggle}/>}
+      </SettingsContext.Provider> 
     </main>
     </>
   );
