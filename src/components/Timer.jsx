@@ -9,7 +9,7 @@ import SettingsContext from "./SettingsContext";
 function Timer() {
   const settingsInfo = useContext(SettingsContext);
 
-  const [isPaused, setIsPaused] = useState(false);
+  const [isPaused, setIsPaused] = useState(true);
   const [mode, setMode] = useState("work"); //work,break, null or pause
   const [secondsLeft, setSecondsLeft] = useState(0);
 
@@ -17,8 +17,9 @@ function Timer() {
   const isPausedRef = useRef(isPaused);
   const modeRef = useRef(mode);
 
-  function initiateTimer() {
-    setSecondsLeft(settingsInfo.workMinutes * 60);
+  function initiateTimer(seconds) {
+    setSecondsLeft(seconds);
+    secondsLeftRef.current = seconds;
   }
 
   function tick() {
@@ -26,26 +27,22 @@ function Timer() {
     setSecondsLeft(secondsLeftRef.current);
   }
 
-  useEffect(() => {
-    function switchMode() {
-      const nextMode = modeRef.current === "work" ? "break" : "work";
-      setMode(nextMode);
-      modeRef.current = nextMode;
-
-      const nextSeconds =
-        nextMode === "work"
-          ? settingsInfo.workMinutes * 60
-          : settingsInfo.breakMinutes * 60;
-
-      initiateTimer(nextSeconds);
-    }
-
-    function initiateTimer(seconds) {
-      setSecondsLeft(seconds);
-      secondsLeftRef.current = seconds;
-    }
-
+useEffect(() => {
+  if(mode === 'work') {
     initiateTimer(settingsInfo.workMinutes * 60);
+  }
+  if(mode === 'break') {
+    initiateTimer(settingsInfo.breakMinutes * 60);
+  }
+  
+  // eslint-disable-next-line
+}, [mode])
+
+
+
+
+  useEffect(() => {
+    
 
     const interval = setInterval(() => {
       if (isPausedRef.current) {
@@ -62,6 +59,19 @@ function Timer() {
     // eslint-disable-next-line
   }, [settingsInfo]);
 
+  function switchMode() {
+    const nextMode = modeRef.current === "work" ? "break" : "work";
+    setMode(nextMode);
+    modeRef.current = nextMode;
+
+    const nextSeconds =
+      nextMode === "work"
+        ? settingsInfo.workMinutes * 60
+        : settingsInfo.breakMinutes * 60;
+
+    initiateTimer(nextSeconds);
+  }
+
   const totalSeconds =
     mode === "work"
       ? settingsInfo.workMinutes * 60
@@ -74,7 +84,9 @@ function Timer() {
 
   if (seconds < 10) seconds = "0" + seconds;
 
-  console.log(mode);
+
+console.log(mode);
+
   return (
     <>
       <div>
@@ -108,6 +120,8 @@ function Timer() {
       <div className="settings-button-container">
         <SettingsButton onClick={() => settingsInfo.setShowSettings(true)} />
       </div>
+      <button onClick={() => setMode('break')}>Break Mode</button>
+      <button onClick={() => setMode('work')}>Work Mode</button>
     </>
   );
 }
