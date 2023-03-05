@@ -57,7 +57,28 @@ button.with-text svg {
 .back-button-container {
   text-align: center;
   margin-top: 20px;
+  
 }
+
+.breakMode-container, .workMode-container {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  font-size: 10px;
+}
+
+.breakMode-container-svg, .workMode-container-svg {
+  width: 50px;
+  height: 50px;
+}
+
+.down-buttons-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+}
+ 
 
 /* Slider */
 

@@ -4,7 +4,9 @@ import "react-circular-progressbar/dist/styles.css";
 import PauseButton from "./Button/PauseButton";
 import PlayButton from "./Button/PlayButton";
 import SettingsButton from "./Button/SettingsButton";
+import WorkButton from "./Button/WorkButton";
 import SettingsContext from "./SettingsContext";
+
 
 function Timer() {
   const settingsInfo = useContext(SettingsContext);
@@ -27,23 +29,18 @@ function Timer() {
     setSecondsLeft(secondsLeftRef.current);
   }
 
-useEffect(() => {
-  if(mode === 'work') {
-    initiateTimer(settingsInfo.workMinutes * 60);
-  }
-  if(mode === 'break') {
-    initiateTimer(settingsInfo.breakMinutes * 60);
-  }
-  
-  // eslint-disable-next-line
-}, [mode])
+  useEffect(() => {
+    if (mode === "work") {
+      initiateTimer(settingsInfo.workMinutes * 60);
+    }
+    if (mode === "break") {
+      initiateTimer(settingsInfo.breakMinutes * 60);
+    }
 
-
-
+    // eslint-disable-next-line
+  }, [mode]);
 
   useEffect(() => {
-    
-
     const interval = setInterval(() => {
       if (isPausedRef.current) {
         return;
@@ -53,7 +50,7 @@ useEffect(() => {
       }
 
       tick();
-    }, 1);
+    }, 10);
 
     return () => clearInterval(interval);
     // eslint-disable-next-line
@@ -84,18 +81,18 @@ useEffect(() => {
 
   if (seconds < 10) seconds = "0" + seconds;
 
-
-console.log(mode);
+  console.log(mode);
 
   return (
     <>
+  
       <div>
         <CircularProgressbar
           value={percentage}
           text={`${minutes}:${seconds} `}
           styles={buildStyles({
             textColor: "#fff",
-            pathColor: mode === 'work' ? "#f54e4e" : "#4aec8c",
+            pathColor: mode === "work" ? "#f54e4e" : "#4aec8c",
             tailColor: "rgba(255,255,255,.2)",
           })}
         />
@@ -120,8 +117,19 @@ console.log(mode);
       <div className="settings-button-container">
         <SettingsButton onClick={() => settingsInfo.setShowSettings(true)} />
       </div>
-      <button onClick={() => setMode('break')}>Break Mode</button>
-      <button onClick={() => setMode('work')}>Work Mode</button>
+      <div className="down-buttons-container">
+        <div className="breakMode-container">
+          <PauseButton
+            onClick={() => setMode("break")}
+            className="breakMode-container-svg"
+          />
+          Break Mode
+        </div>
+        <div onClick={() => setMode("work")} className="workMode-container">
+          <WorkButton className="workMode-container-svg" />
+          Work Mode
+        </div>
+      </div>
     </>
   );
 }
