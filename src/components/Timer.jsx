@@ -6,7 +6,8 @@ import PlayButton from "./Button/PlayButton";
 import SettingsButton from "./Button/SettingsButton";
 import WorkButton from "./Button/WorkButton";
 import SettingsContext from "./SettingsContext";
-
+import { EasyRingReactComponent } from "easy-ring";
+import testAudio from "../assets/bell-ring-01.wav";
 
 function Timer() {
   const settingsInfo = useContext(SettingsContext);
@@ -14,6 +15,8 @@ function Timer() {
   const [isPaused, setIsPaused] = useState(true);
   const [mode, setMode] = useState("work"); //work,break, null or pause
   const [secondsLeft, setSecondsLeft] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [ring, setRing] = useState(false);
 
   const secondsLeftRef = useRef(secondsLeft);
   const isPausedRef = useRef(isPaused);
@@ -36,7 +39,22 @@ function Timer() {
     if (mode === "break") {
       initiateTimer(settingsInfo.breakMinutes * 60);
     }
+    // eslint-disable-next-line
+  }, [mode]);
 
+  useEffect(() => {
+
+    setOpen(true);
+    setRing(true);
+    console.log(ring)
+    
+    const interval = setInterval(() => {
+      if (open) {
+        setRing(false);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
     // eslint-disable-next-line
   }, [mode]);
 
@@ -50,7 +68,7 @@ function Timer() {
       }
 
       tick();
-    }, 10);
+    }, 100);
 
     return () => clearInterval(interval);
     // eslint-disable-next-line
@@ -81,12 +99,24 @@ function Timer() {
 
   if (seconds < 10) seconds = "0" + seconds;
 
-  console.log(mode);
+  const endedHandle = () => {
+    //
+    setRing(false);
+    console.log("ended");
+  };
 
   return (
     <>
-  
       <div>
+        <div>
+          <EasyRingReactComponent
+            open={open}
+            ring={ring}
+            src={testAudio}
+            setRing={setRing}
+            ended={endedHandle}
+          ></EasyRingReactComponent>
+        </div>
         <CircularProgressbar
           value={percentage}
           text={`${minutes}:${seconds} `}
