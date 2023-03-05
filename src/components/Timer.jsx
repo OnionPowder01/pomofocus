@@ -17,10 +17,12 @@ function Timer() {
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [open, setOpen] = useState(false);
   const [ring, setRing] = useState(false);
+  const [ringMode, setRingMode] = useState('')
 
   const secondsLeftRef = useRef(secondsLeft);
   const isPausedRef = useRef(isPaused);
   const modeRef = useRef(mode);
+  
 
   function initiateTimer(seconds) {
     setSecondsLeft(seconds);
@@ -32,6 +34,8 @@ function Timer() {
     setSecondsLeft(secondsLeftRef.current);
   }
 
+
+
   useEffect(() => {
     if (mode === "work") {
       initiateTimer(settingsInfo.workMinutes * 60);
@@ -42,21 +46,24 @@ function Timer() {
     // eslint-disable-next-line
   }, [mode]);
 
+
   useEffect(() => {
 
     setOpen(true);
     setRing(true);
-    console.log(ring)
+    console.log(ringMode)
+  
     
-    const interval = setInterval(() => {
-      if (open) {
+    const interval = setTimeout(() => {
         setRing(false);
-      }
-    }, 3000);
+        
+    }, 2000);
 
-    return () => clearInterval(interval);
+    return () => clearTimeout(interval);
     // eslint-disable-next-line
-  }, [mode]);
+  }, [ringMode]);
+
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -73,10 +80,12 @@ function Timer() {
     return () => clearInterval(interval);
     // eslint-disable-next-line
   }, [settingsInfo]);
+  
 
   function switchMode() {
     const nextMode = modeRef.current === "work" ? "break" : "work";
     setMode(nextMode);
+    setRingMode(nextMode);
     modeRef.current = nextMode;
 
     const nextSeconds =
@@ -156,7 +165,7 @@ function Timer() {
           Break Mode
         </div>
         <div onClick={() => setMode("work")} className="workMode-container">
-          <WorkButton className="workMode-container-svg" />
+          <WorkButton  className="workMode-container-svg" />
           Work Mode
         </div>
       </div>
