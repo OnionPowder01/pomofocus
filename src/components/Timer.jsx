@@ -8,6 +8,8 @@ import WorkButton from "./Button/WorkButton";
 import SettingsContext from "./SettingsContext";
 import { EasyRingReactComponent } from "easy-ring";
 import testAudio from "../assets/bell-ring-01.wav";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Timer() {
   const settingsInfo = useContext(SettingsContext);
@@ -17,12 +19,13 @@ function Timer() {
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [open, setOpen] = useState(false);
   const [ring, setRing] = useState(false);
-  const [ringMode, setRingMode] = useState('')
+  const [ringMode, setRingMode] = useState("");
+  const [isDone, setIsDone] = useState(false);
 
   const secondsLeftRef = useRef(secondsLeft);
   const isPausedRef = useRef(isPaused);
   const modeRef = useRef(mode);
-  
+
 
   function initiateTimer(seconds) {
     setSecondsLeft(seconds);
@@ -32,9 +35,12 @@ function Timer() {
   function tick() {
     secondsLeftRef.current--;
     setSecondsLeft(secondsLeftRef.current);
+
+    if (secondsLeftRef.current === 0) {
+      setIsDone(true);
+      console.log('seconds to zero')
+    }
   }
-
-
 
   useEffect(() => {
     if (mode === "work") {
@@ -46,24 +52,18 @@ function Timer() {
     // eslint-disable-next-line
   }, [mode]);
 
-
   useEffect(() => {
-
     setOpen(true);
     setRing(true);
-    console.log(ringMode)
-  
+   
     
     const interval = setTimeout(() => {
-        setRing(false);
-        
+      setRing(false);
     }, 2000);
 
     return () => clearTimeout(interval);
     // eslint-disable-next-line
   }, [ringMode]);
-
-
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -80,7 +80,6 @@ function Timer() {
     return () => clearInterval(interval);
     // eslint-disable-next-line
   }, [settingsInfo]);
-  
 
   function switchMode() {
     const nextMode = modeRef.current === "work" ? "break" : "work";
@@ -114,8 +113,41 @@ function Timer() {
     console.log("ended");
   };
 
+  useEffect(() => {
+    if (isDone) {
+      const message = mode === 'work'
+        ? 'Great job! You completed a work session!'
+        : "Take a break! You've earned it.";
+        
+      toast.success(message, {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+  }, [mode]);
+      
+
   return (
     <>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+
       <div>
         <div>
           <EasyRingReactComponent
@@ -165,7 +197,7 @@ function Timer() {
           Break Mode
         </div>
         <div onClick={() => setMode("work")} className="workMode-container">
-          <WorkButton  className="workMode-container-svg" />
+          <WorkButton className="workMode-container-svg" />
           Work Mode
         </div>
       </div>
