@@ -38,7 +38,6 @@ function Timer() {
 
     if (secondsLeftRef.current === 0) {
       setIsDone(true);
-      console.log('seconds to zero')
     }
   }
 
@@ -72,20 +71,26 @@ function Timer() {
       }
       if (secondsLeftRef.current === 0) {
         return switchMode();
+        
       }
 
       tick();
     }, 100);
 
+
     return () => clearInterval(interval);
     // eslint-disable-next-line
   }, [settingsInfo]);
+
+  console.log(isPaused);
 
   function switchMode() {
     const nextMode = modeRef.current === "work" ? "break" : "work";
     setMode(nextMode);
     setRingMode(nextMode);
     modeRef.current = nextMode;
+    setIsPaused(true);
+    isPausedRef.current = true;
 
     const nextSeconds =
       nextMode === "work"
@@ -124,9 +129,9 @@ function Timer() {
         theme: "dark",
       });
     }
+    // eslint-disable-next-line
   }, [mode]);
       
-
   return (
     <>
       <ToastContainer
