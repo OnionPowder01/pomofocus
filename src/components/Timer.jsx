@@ -107,16 +107,10 @@ function Timer() {
 
   if (seconds < 10) seconds = "0" + seconds;
 
-  const endedHandle = () => {
-    //
-    setRing(false);
-    console.log("ended");
-  };
-
   useEffect(() => {
     if (isDone) {
       const message = mode === 'work'
-        ? 'Great job! You completed a work session!'
+        ? "Let's get back to work!"
         : "Take a break! You've earned it.";
         
       toast.success(message, {
@@ -155,7 +149,7 @@ function Timer() {
             ring={ring}
             src={testAudio}
             setRing={setRing}
-            ended={endedHandle}
+          
           ></EasyRingReactComponent>
         </div>
         <CircularProgressbar
