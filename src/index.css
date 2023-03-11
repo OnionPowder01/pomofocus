@@ -109,3 +109,8 @@ label {
 .slider.green .thumb {
   background-color: var(--green);
 }
+
+.css-2ulfj5-MuiTypography-root {
+  font-family: "Gloock", serif!important;
+}
+

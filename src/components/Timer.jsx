@@ -9,7 +9,9 @@ import SettingsContext from "./SettingsContext";
 import { EasyRingReactComponent } from "easy-ring";
 import testAudio from "../assets/bell-ring-01.wav";
 import { ToastContainer, toast } from "react-toastify";
+import { HistoryLogContext } from "./HistoryLogContext.jsx";
 import "react-toastify/dist/ReactToastify.css";
+import HistoryLogModal from "./HistoryLogModal";
 
 function Timer() {
   const settingsInfo = useContext(SettingsContext);
@@ -21,11 +23,11 @@ function Timer() {
   const [ring, setRing] = useState(false);
   const [ringMode, setRingMode] = useState("");
   const [isDone, setIsDone] = useState(false);
+  const [cycle, setCycle] = useState(0);
 
   const secondsLeftRef = useRef(secondsLeft);
   const isPausedRef = useRef(isPaused);
   const modeRef = useRef(mode);
-
 
   function initiateTimer(seconds) {
     setSecondsLeft(seconds);
@@ -54,8 +56,7 @@ function Timer() {
   useEffect(() => {
     setOpen(true);
     setRing(true);
-   
-    
+
     const interval = setTimeout(() => {
       setRing(false);
     }, 2000);
@@ -71,18 +72,16 @@ function Timer() {
       }
       if (secondsLeftRef.current === 0) {
         return switchMode();
-        
       }
 
       tick();
-    }, 1000);
-
+    }, 100);
 
     return () => clearInterval(interval);
     // eslint-disable-next-line
   }, [settingsInfo]);
 
-  console.log(isPaused);
+
 
   function switchMode() {
     const nextMode = modeRef.current === "work" ? "break" : "work";
@@ -114,10 +113,11 @@ function Timer() {
 
   useEffect(() => {
     if (isDone) {
-      const message = mode === 'work'
-        ? "Let's get back to work!"
-        : "Take a break! You've earned it.";
-        
+      const message =
+        mode === "work"
+          ? "Let's get back to work!"
+          : "Take a break! You've earned it.";
+
       toast.success(message, {
         position: "top-center",
         autoClose: 2000,
@@ -131,9 +131,37 @@ function Timer() {
     }
     // eslint-disable-next-line
   }, [mode]);
-      
+
+  const { addToHistory } = useContext(HistoryLogContext);
+  const { historyLog } = useContext(HistoryLogContext);
+
+  const handleStart = () => {
+    const startTime = new Date().getTime();
+    // Start the timer
+    addToHistory({ start: startTime, currentMode: mode });
+  };
+
+  const handlePause = () => {
+    const pauseTime = new Date().getTime();
+    // Pause the timer
+    const updatedSession = { pause: pauseTime, currentMode: mode };
+    addToHistory(updatedSession);
+  };
+
+  useEffect(() => {
+    const handleCycle = () => {
+      if (secondsLeftRef.current === 0 && modeRef.current === "work") {
+        setCycle((prevCycle) => prevCycle + 1);
+      }
+    };
+    handleCycle();
+    // eslint-disable-next-line
+  }, [percentage]);
+
   return (
     <>
+      <HistoryLogModal historyLog={historyLog} cycle={cycle}/>
+        
       <ToastContainer
         position="top-center"
         autoClose={5000}
@@ -154,7 +182,6 @@ function Timer() {
             ring={ring}
             src={testAudio}
             setRing={setRing}
-          
           ></EasyRingReactComponent>
         </div>
         <CircularProgressbar
@@ -173,6 +200,7 @@ function Timer() {
             onClick={() => {
               setIsPaused(false);
               isPausedRef.current = false;
+              handleStart();
             }}
           />
         ) : (
@@ -180,6 +208,7 @@ function Timer() {
             onClick={() => {
               setIsPaused(true);
               isPausedRef.current = true;
+              handlePause();
             }}
           />
         )}

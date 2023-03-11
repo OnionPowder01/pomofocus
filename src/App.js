@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Settings from "./components/Settings";
 import SettingsContext from "./components/SettingsContext";
 import Timer from "./components/Timer";
+import HistoryLogProvider from "./components/HistoryLogContext.jsx";
 
 function App() {
   const [showSettings, setShowSettings] = useState(false);
@@ -15,6 +16,7 @@ function App() {
   return (
     <>
       <main>
+        <HistoryLogProvider>
         <SettingsContext.Provider
           value={{
             showSettings,
@@ -31,6 +33,7 @@ function App() {
             <Timer handleClick={settingsToggle} />
           )}
         </SettingsContext.Provider>
+        </HistoryLogProvider>
       </main>
     </>
   );
