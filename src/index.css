@@ -136,7 +136,7 @@ label {
   color: var(--red);
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 600px) {
   .modal-box {
     width: 70%;
   }
