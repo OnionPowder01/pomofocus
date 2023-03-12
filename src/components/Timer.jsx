@@ -160,8 +160,6 @@ function Timer() {
 
   return (
     <>
-      <HistoryLogModal historyLog={historyLog} cycle={cycle}/>
-        
       <ToastContainer
         position="top-center"
         autoClose={5000}
@@ -227,6 +225,10 @@ function Timer() {
         <div onClick={() => setMode("work")} className="workMode-container">
           <WorkButton className="workMode-container-svg" />
           Work Mode
+        </div>
+        <div className="history-log-container">
+        <HistoryLogModal historyLog={historyLog} cycle={cycle}/> 
+        Report
         </div>
       </div>
     </>

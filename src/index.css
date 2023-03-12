@@ -57,17 +57,19 @@ button.with-text svg {
 .back-button-container {
   text-align: center;
   margin-top: 20px;
-  
 }
 
-.breakMode-container, .workMode-container {
+.breakMode-container,
+.workMode-container,
+.history-log-container {
   display: flex;
   flex-direction: column;
-  text-align: left;
   font-size: 10px;
 }
 
-.breakMode-container-svg, .workMode-container-svg {
+.breakMode-container-svg,
+.workMode-container-svg,
+.history-log-container-svg {
   width: 50px;
   height: 50px;
 }
@@ -76,9 +78,8 @@ button.with-text svg {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+  margin-top: 40px;
 }
- 
 
 /* Slider */
 
@@ -110,7 +111,33 @@ label {
   background-color: var(--green);
 }
 
-.css-2ulfj5-MuiTypography-root {
-  font-family: "Gloock", serif!important;
+/* History Log */
+
+.modal-box {
+  width: 30%;
 }
 
+.css-2ulfj5-MuiTypography-root {
+  text-align: center;
+  font-family: "Gloock", serif !important;
+  font-size: 15px !important;
+}
+
+#modal-modal-description {
+  font-size: 12px !important;
+  text-align: center;
+}
+
+.start-time {
+  color: var(--green);
+}
+
+.pause-time {
+  color: var(--red);
+}
+
+@media screen and (max-width: 450px) {
+  .modal-box {
+    width: 70%;
+  }
+}
