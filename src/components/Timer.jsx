@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import PauseButton from "./Button/PauseButton";
@@ -11,12 +11,12 @@ import { HistoryLogContext } from "./HistoryLogContext.jsx";
 import "react-toastify/dist/ReactToastify.css";
 import HistoryLogModal from "./HistoryLogModal";
 import useTimer from "../hooks/useTimer";
-import Ring from "../hooks/useRing";
+import Ring from "./Ring";
 import useToaster from "../hooks/useToaster";
+import HandleHistoryLog from "./HandleHistoryLog";
 
 function Timer() {
   const settingsInfo = useContext(SettingsContext);
-  const { addToHistory } = useContext(HistoryLogContext);
   const { historyLog } = useContext(HistoryLogContext);
 
   const {
@@ -27,49 +27,17 @@ function Timer() {
     secondsLeft,
     isDone,
     cycle,
-    setCycle,
-    secondsLeftRef,
-    modeRef,
     isPausedRef,
     ringMode,
+    percentage,
   } = useTimer(settingsInfo);
 
-  const totalSeconds =
-    mode === "work"
-      ? settingsInfo.workMinutes * 60
-      : settingsInfo.breakMinutes * 60;
-
-  const percentage = Math.round((secondsLeft / totalSeconds) * 100);
+  const { handleStart, handlePause } = HandleHistoryLog(mode);
 
   const minutes = Math.floor(secondsLeft / 60);
-  let seconds = secondsLeft % 60;
-
-  if (seconds < 10) seconds = "0" + seconds;
+  const seconds = (secondsLeft % 60).toString().padStart(2, "0");
 
   useToaster(isDone, mode);
-
-  const handleStart = () => {
-    const startTime = new Date().getTime();
-    // Start the timer
-    addToHistory({ start: startTime, currentMode: mode });
-  };
-
-  const handlePause = () => {
-    const pauseTime = new Date().getTime();
-    // Pause the timer
-    const updatedSession = { pause: pauseTime, currentMode: mode };
-    addToHistory(updatedSession);
-  };
-
-  useEffect(() => {
-    const handleCycle = () => {
-      if (secondsLeftRef.current === 0 && modeRef.current === "work") {
-        setCycle((prevCycle) => prevCycle + 1);
-      }
-    };
-    handleCycle();
-    // eslint-disable-next-line
-  }, [percentage]);
 
   return (
     <>
@@ -97,7 +65,6 @@ function Timer() {
           tailColor: "rgba(255,255,255,.2)",
         })}
       />
-
       <div className="buttons-container">
         {isPaused ? (
           <PlayButton
