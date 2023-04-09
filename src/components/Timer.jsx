@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useEffect, useContext } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import PauseButton from "./Button/PauseButton";
@@ -6,98 +6,33 @@ import PlayButton from "./Button/PlayButton";
 import SettingsButton from "./Button/SettingsButton";
 import WorkButton from "./Button/WorkButton";
 import SettingsContext from "./SettingsContext";
-import { EasyRingReactComponent } from "easy-ring";
-import testAudio from "../assets/bell-ring-01.wav";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import { HistoryLogContext } from "./HistoryLogContext.jsx";
 import "react-toastify/dist/ReactToastify.css";
 import HistoryLogModal from "./HistoryLogModal";
+import useTimer from "../hooks/useTimer";
+import Ring from "../hooks/useRing";
+import useToaster from "../hooks/useToaster";
 
 function Timer() {
   const settingsInfo = useContext(SettingsContext);
+  const { addToHistory } = useContext(HistoryLogContext);
+  const { historyLog } = useContext(HistoryLogContext);
 
-  const [isPaused, setIsPaused] = useState(true);
-  const [mode, setMode] = useState("work"); //work,break, null or pause
-  const [secondsLeft, setSecondsLeft] = useState(0);
-  const [open, setOpen] = useState(false);
-  const [ring, setRing] = useState(false);
-  const [ringMode, setRingMode] = useState("");
-  const [isDone, setIsDone] = useState(false);
-  const [cycle, setCycle] = useState(0);
-
-  const secondsLeftRef = useRef(secondsLeft);
-  const isPausedRef = useRef(isPaused);
-  const modeRef = useRef(mode);
-
-  function initiateTimer(seconds) {
-    setSecondsLeft(seconds);
-    secondsLeftRef.current = seconds;
-  }
-
-  function tick() {
-    secondsLeftRef.current--;
-    setSecondsLeft(secondsLeftRef.current);
-
-    if (secondsLeftRef.current === 0) {
-      setIsDone(true);
-    }
-  }
-
-  useEffect(() => {
-    if (mode === "work") {
-      initiateTimer(settingsInfo.workMinutes * 60);
-    }
-    if (mode === "break") {
-      initiateTimer(settingsInfo.breakMinutes * 60);
-    }
-    // eslint-disable-next-line
-  }, [mode]);
-
-  useEffect(() => {
-    setOpen(true);
-    setRing(true);
-
-    const interval = setTimeout(() => {
-      setRing(false);
-    }, 2000);
-
-    return () => clearTimeout(interval);
-    // eslint-disable-next-line
-  }, [ringMode]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isPausedRef.current) {
-        return;
-      }
-      if (secondsLeftRef.current === 0) {
-        return switchMode();
-      }
-
-      tick();
-    }, 1000);
-
-    return () => clearInterval(interval);
-    // eslint-disable-next-line
-  }, [settingsInfo]);
-
-
-
-  function switchMode() {
-    const nextMode = modeRef.current === "work" ? "break" : "work";
-    setMode(nextMode);
-    setRingMode(nextMode);
-    modeRef.current = nextMode;
-    setIsPaused(true);
-    isPausedRef.current = true;
-
-    const nextSeconds =
-      nextMode === "work"
-        ? settingsInfo.workMinutes * 60
-        : settingsInfo.breakMinutes * 60;
-
-    initiateTimer(nextSeconds);
-  }
+  const {
+    isPaused,
+    setIsPaused,
+    mode,
+    setMode,
+    secondsLeft,
+    isDone,
+    cycle,
+    setCycle,
+    secondsLeftRef,
+    modeRef,
+    isPausedRef,
+    ringMode,
+  } = useTimer(settingsInfo);
 
   const totalSeconds =
     mode === "work"
@@ -111,29 +46,7 @@ function Timer() {
 
   if (seconds < 10) seconds = "0" + seconds;
 
-  useEffect(() => {
-    if (isDone) {
-      const message =
-        mode === "work"
-          ? "Let's get back to work!"
-          : "Take a break! You've earned it.";
-
-      toast.success(message, {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-    }
-    // eslint-disable-next-line
-  }, [mode]);
-
-  const { addToHistory } = useContext(HistoryLogContext);
-  const { historyLog } = useContext(HistoryLogContext);
+  useToaster(isDone, mode);
 
   const handleStart = () => {
     const startTime = new Date().getTime();
@@ -172,26 +85,19 @@ function Timer() {
         pauseOnHover
         theme="dark"
       />
-
       <div>
-        <div>
-          <EasyRingReactComponent
-            open={open}
-            ring={ring}
-            src={testAudio}
-            setRing={setRing}
-          ></EasyRingReactComponent>
-        </div>
-        <CircularProgressbar
-          value={percentage}
-          text={`${minutes}:${seconds} `}
-          styles={buildStyles({
-            textColor: "#fff",
-            pathColor: mode === "work" ? "#f54e4e" : "#4aec8c",
-            tailColor: "rgba(255,255,255,.2)",
-          })}
-        />
+        <Ring ringMode={ringMode} />
       </div>
+      <CircularProgressbar
+        value={percentage}
+        text={`${minutes}:${seconds} `}
+        styles={buildStyles({
+          textColor: "#fff",
+          pathColor: mode === "work" ? "#f54e4e" : "#4aec8c",
+          tailColor: "rgba(255,255,255,.2)",
+        })}
+      />
+
       <div className="buttons-container">
         {isPaused ? (
           <PlayButton
@@ -227,8 +133,8 @@ function Timer() {
           Work Mode
         </div>
         <div className="history-log-container">
-        <HistoryLogModal historyLog={historyLog} cycle={cycle}/> 
-        Report
+          <HistoryLogModal historyLog={historyLog} cycle={cycle} />
+          Report
         </div>
       </div>
     </>
