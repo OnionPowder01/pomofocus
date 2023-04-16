@@ -9,6 +9,7 @@ function App() {
   const [workMinutes, setWorkMinutes] = useState(25);
   const [breakMinutes, setBreakMinutes] = useState(5);
 
+
   const settingsToggle = () => {
     setShowSettings((prevState) => !prevState);
   };

@@ -136,8 +136,68 @@ label {
   color: var(--red);
 }
 
+/* Tasks */
+
+.tasks-container {
+  display: flex;
+  width: 100%;
+}
+
+/* Add Task Button */
+
+.tasks-button-container {
+  display: flex;
+  align-items: center;
+}
+
+.tasks-button-container button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50px;
+  padding: 5px;
+  margin-top: 20px;
+  gap: 4px; 
+  border: 1px solid var(--green);
+  border-radius: 10px;
+}
+.tasks-button-container button p {
+  color: var(--green);
+}
+
+.tasks-button-container svg {
+  width: 30px; 
+  color: var(--green);
+}
+
+/* Add Task Modal */
+
+.add-task-button-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 10px;
+  gap: 10px;
+}
+.mantine-TextInput-label {
+ font-weight: 800;
+
+}
+
+.mantine-Modal-inner {
+  padding-left: 0;
+  padding-right: 0;;
+}
+
+
 @media screen and (max-width: 600px) {
   .modal-box {
     width: 70%;
+  }
+
+  .mantine-Modal-inner {
+    width: 90%;
+    margin-left: 10px;
   }
 }
