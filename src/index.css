@@ -10,6 +10,7 @@
 body {
   background-color: #30374b;
   color: #eee;
+  padding-bottom: 50px;
 }
 
 main {
@@ -140,6 +141,8 @@ label {
 
 .tasks-container {
   display: flex;
+  /* justify-content: space-between; */
+  flex-direction: column;
   width: 100%;
 }
 
@@ -189,6 +192,12 @@ label {
   padding-left: 0;
   padding-right: 0;;
 }
+
+
+
+/* #root > main > div:nth-child(9) > div > div > element.style {
+  margin-top: 0;
+} */
 
 
 @media screen and (max-width: 600px) {

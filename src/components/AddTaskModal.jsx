@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Modal, Group, TextInput, Button } from "@mantine/core";
 import { v4 as uuidv4 } from "uuid";
 
@@ -20,8 +20,6 @@ const AddTaskModal = ({
     setOpen(false);
   };
 
-  console.log(tasks);
-  console.log(taskName);
 
   return (
     <>

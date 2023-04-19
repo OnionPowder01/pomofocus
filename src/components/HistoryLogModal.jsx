@@ -29,9 +29,6 @@ function HistoryLogModal({ historyLog, cycle }) {
     p: 4,
   };
 
-  console.log(historyLog);
-  console.log(cycle);
-
   return (
     <div>
       <HistoryLogButton

@@ -18,8 +18,7 @@ import Tasks from "./Tasks";
 import { DragDropContext } from "react-beautiful-dnd";
 import AddTaskButton from "./Button/AddTaskButton";
 import AddTaskModal from "./AddTaskModal";
-import { TaskContext } from "./TaskContext";
-import { v4 as uuidv4 } from "uuid";
+import onDragEnd from "../hooks/onDragEnd";
 
 function Timer() {
   const settingsInfo = useContext(SettingsContext);
@@ -29,11 +28,6 @@ function Timer() {
 
   const [taskName, setTaskName] = useState("");
   const [tasks, setTasks] = useState([]);
-
-  //   const [tasks, setTasks] = useState({
-  //     taskName: '',
-  //     taskId: ''
-  // })
 
   const {
     isPaused,
@@ -55,101 +49,127 @@ function Timer() {
 
   useToaster(isDone, mode);
 
+  // const onDragEnd = (result, columns, setColumns) => {
+  //   if(!result.destination) return;
+  //   const { source, destination } = result;
+  //   if (source.droppableId !== destination.droppableId) {
+
+  //   } else {
+  //     const column = columns[source.droppableId];
+  //     const copiedItems = [...column.items];
+  //     const [removed] = copiedItems.splice(source.index, 1);
+  //     copiedItems.splice(destination.index, 0, removed);
+  //     setColumns({
+  //       ...columns,
+  //       [source.droppableId]: {
+  //         ...column,
+  //         items: copiedItems
+  //       } 
+  //     })
+  //   }
+    
+
+  // }
+
+  // const tasksToCompleteText = tasks.length > 0 ? 'Tasks to complete' : ''
+
   return (
     <>
-      <TaskContext.Provider value={tasks}>
-        <ToastContainer
-          position="top-center"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark"
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+      <div>
+        <Ring ringMode={ringMode} />
+      </div>
+      <CircularProgressbar
+        value={percentage}
+        text={`${minutes}:${seconds} `}
+        styles={buildStyles({
+          textColor: "#fff",
+          pathColor: mode === "work" ? "#f54e4e" : "#4aec8c",
+          tailColor: "rgba(255,255,255,.2)",
+        })}
+      />
+      <div className="buttons-container">
+        {isPaused ? (
+          <PlayButton
+            onClick={() => {
+              setIsPaused(false);
+              isPausedRef.current = false;
+              handleStart();
+            }}
+          />
+        ) : (
+          <PauseButton
+            onClick={() => {
+              setIsPaused(true);
+              isPausedRef.current = true;
+              handlePause();
+            }}
+          />
+        )}
+      </div>
+      <div className="settings-button-container">
+        <SettingsButton onClick={() => settingsInfo.setShowSettings(true)} />
+      </div>
+      <div className="down-buttons-container">
+        <div className="breakMode-container">
+          <PauseButton
+            onClick={() => setMode("break")}
+            className="breakMode-container-svg"
+          />
+          Break Mode
+        </div>
+        <div onClick={() => setMode("work")} className="workMode-container">
+          <WorkButton className="workMode-container-svg" />
+          Work Mode
+        </div>
+        <div className="history-log-container">
+          <HistoryLogModal historyLog={historyLog} cycle={cycle} />
+          Report
+        </div>
+      </div>
+      <div className="add-task-container">
+        <AddTaskButton onClick={() => setOpen(true)} />
+        {/* <div className="tasks-to-complete">
+          <p>{tasksToCompleteText}</p>
+        </div> */}
+      </div>
+
+      <div>
+        <AddTaskModal
+          open={open}
+          setOpen={setOpen}
+          taskName={taskName}
+          setTaskName={setTaskName}
+          tasks={tasks}
+          setTasks={setTasks}
         />
-        <div>
-          <Ring ringMode={ringMode} />
-        </div>
-        <CircularProgressbar
-          value={percentage}
-          text={`${minutes}:${seconds} `}
-          styles={buildStyles({
-            textColor: "#fff",
-            pathColor: mode === "work" ? "#f54e4e" : "#4aec8c",
-            tailColor: "rgba(255,255,255,.2)",
-          })}
-        />
-        <div className="buttons-container">
-          {isPaused ? (
-            <PlayButton
-              onClick={() => {
-                setIsPaused(false);
-                isPausedRef.current = false;
-                handleStart();
-              }}
-            />
-          ) : (
-            <PauseButton
-              onClick={() => {
-                setIsPaused(true);
-                isPausedRef.current = true;
-                handlePause();
-              }}
-            />
-          )}
-        </div>
-        <div className="settings-button-container">
-          <SettingsButton onClick={() => settingsInfo.setShowSettings(true)} />
-        </div>
-        <div className="down-buttons-container">
-          <div className="breakMode-container">
-            <PauseButton
-              onClick={() => setMode("break")}
-              className="breakMode-container-svg"
-            />
-            Break Mode
-          </div>
-          <div onClick={() => setMode("work")} className="workMode-container">
-            <WorkButton className="workMode-container-svg" />
-            Work Mode
-          </div>
-          <div className="history-log-container">
-            <HistoryLogModal historyLog={historyLog} cycle={cycle} />
-            Report
-          </div>
-        </div>
-        <div className="add-task-container">
-          <AddTaskButton onClick={() => setOpen(true)} />
-        </div>
-        <div>
-          <AddTaskModal
-            open={open}
-            setOpen={setOpen}
+      </div>
+
+      <div>
+        <DragDropContext
+          shouldRespectForcePress={true}
+          onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
+        >
+          <Tasks
+            columns={columns}
+            setColumns={setColumns}
             taskName={taskName}
             setTaskName={setTaskName}
             tasks={tasks}
-            setTasks={setTasks}
           />
-        </div>
-        <div>
-          <DragDropContext
-            shouldRespectForcePress={true}
-            onDragEnd={(result) => console.log(result)}
-            onDragStart={(result) => console.log(result)}
-          >
-            <Tasks
-              columns={columns}
-              setColumns={setColumns}
-              taskName={taskName}
-              setTaskName={setTaskName}
-              tasks={tasks}
-            />
-          </DragDropContext>
-        </div>
-      </TaskContext.Provider>
+        </DragDropContext>
+      </div>
     </>
   );
 }
