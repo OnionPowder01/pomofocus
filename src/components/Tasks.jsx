@@ -11,13 +11,14 @@ const Tasks = ({ columns, setColumns, tasks }) => {
     },
     [uuidv4()]: {
       name: "Finished tasks",
-      items: tasks.filter(task => task.finished),
+      items: tasks.filter((task) => task.finished),
       finished: true,
     },
   };
 
   useEffect(() => {
     setColumns(initialColumns);
+    // eslint-disable-next-line
   }, [tasks]);
 
   return (
@@ -33,7 +34,7 @@ const Tasks = ({ columns, setColumns, tasks }) => {
             >
               {tasks.length > 0 ? column.name : ""}
             </p>
-            <Droppable key={id} droppableId={id} >
+            <Droppable key={id} droppableId={id}>
               {(provided, snapshot) => {
                 return (
                   <div

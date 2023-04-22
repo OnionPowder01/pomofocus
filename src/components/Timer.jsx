@@ -23,14 +23,10 @@ import onDragEnd from "../hooks/onDragEnd";
 function Timer() {
   const settingsInfo = useContext(SettingsContext);
   const { historyLog } = useContext(HistoryLogContext);
-
   const [open, setOpen] = useState(false);
-
   const [taskName, setTaskName] = useState("");
   const [tasks, setTasks] = useState([]);
-
   const [columns, setColumns] = useState([]);
-
 
   const {
     isPaused,
