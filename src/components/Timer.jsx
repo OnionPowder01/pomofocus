@@ -23,11 +23,14 @@ import onDragEnd from "../hooks/onDragEnd";
 function Timer() {
   const settingsInfo = useContext(SettingsContext);
   const { historyLog } = useContext(HistoryLogContext);
-  const [columns, setColumns] = useState([]);
+
   const [open, setOpen] = useState(false);
 
   const [taskName, setTaskName] = useState("");
   const [tasks, setTasks] = useState([]);
+
+  const [columns, setColumns] = useState([]);
+
 
   const {
     isPaused,
@@ -48,30 +51,6 @@ function Timer() {
   const seconds = (secondsLeft % 60).toString().padStart(2, "0");
 
   useToaster(isDone, mode);
-
-  // const onDragEnd = (result, columns, setColumns) => {
-  //   if(!result.destination) return;
-  //   const { source, destination } = result;
-  //   if (source.droppableId !== destination.droppableId) {
-
-  //   } else {
-  //     const column = columns[source.droppableId];
-  //     const copiedItems = [...column.items];
-  //     const [removed] = copiedItems.splice(source.index, 1);
-  //     copiedItems.splice(destination.index, 0, removed);
-  //     setColumns({
-  //       ...columns,
-  //       [source.droppableId]: {
-  //         ...column,
-  //         items: copiedItems
-  //       } 
-  //     })
-  //   }
-    
-
-  // }
-
-  // const tasksToCompleteText = tasks.length > 0 ? 'Tasks to complete' : ''
 
   return (
     <>
@@ -140,9 +119,6 @@ function Timer() {
       </div>
       <div className="add-task-container">
         <AddTaskButton onClick={() => setOpen(true)} />
-        {/* <div className="tasks-to-complete">
-          <p>{tasksToCompleteText}</p>
-        </div> */}
       </div>
 
       <div>
@@ -153,6 +129,8 @@ function Timer() {
           setTaskName={setTaskName}
           tasks={tasks}
           setTasks={setTasks}
+          columns={columns}
+          setColumns={setColumns}
         />
       </div>
 

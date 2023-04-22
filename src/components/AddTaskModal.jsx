@@ -15,7 +15,7 @@ const AddTaskModal = ({
   };
 
   const handleAddTask = () => {
-    const newTask = { id: uuidv4(), content: taskName };
+    const newTask = { id: uuidv4(), content: taskName, finished: false };
     setTasks([...tasks, newTask]);
     setOpen(false);
   };
